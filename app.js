@@ -21,6 +21,9 @@ app.get("/", function(req, res) {
   res.render("home");
 });
 
+app.get("/secret", function(req, res) {
+  res.render("secret");
+});
 
 // Connect to server
 app.listen(process.env.PORT || 3000, process.env.IP, function() {
