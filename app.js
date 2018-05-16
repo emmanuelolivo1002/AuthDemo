@@ -13,13 +13,13 @@ var app = express();
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(require('express-session')({
   secret: "This is a secret",
   resave: false,
   saveUninitialized: false
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -36,7 +36,7 @@ app.get("/", function(req, res) {
   res.render("home");
 });
 
-app.get("/secret", function(req, res) {
+app.get("/secret", isLoggedIn, function(req, res) {
   res.render("secret");
 });
 
@@ -75,6 +75,25 @@ app.post("/login", passport.authenticate("local", {
     failureRedirect: "/login"
   }), function(req, res) {
 });
+
+
+//LOGOUT
+app.get("/logout", function(req, res) {
+  req.logout();
+  res.redirect('/');
+});
+
+// Middleware
+function isLoggedIn(req, res, next) {
+  console.log(req.isAuthenticated());
+  if(req.isAuthenticated()){
+    return next();
+  } else {
+    // Otherwise
+    res.redirect("/login")
+  }
+}
+
 
 // Connect to server
 app.listen(process.env.PORT || 3000, process.env.IP, function() {
