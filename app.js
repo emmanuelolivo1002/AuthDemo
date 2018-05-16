@@ -29,7 +29,7 @@ passport.deserializeUser(User.deserializeUser());
 mongoose.connect("mongodb://localhost/auth_demo_app");
 
 
-// Routes
+// ROUTES
 
 app.get("/", function(req, res) {
   res.render("home");
@@ -38,6 +38,28 @@ app.get("/", function(req, res) {
 app.get("/secret", function(req, res) {
   res.render("secret");
 });
+
+// Auth routes
+
+// Show register form
+app.get("/register", function(req, res) {
+  res.render("register");
+});
+
+// Handle user signup
+app.post("/register", function(req, res) {
+  User.register(new User({username: req.body.username}), req.body.password, function(err, user) {
+    if (err) {
+      console.log(err);
+      return res.render("register");
+    } else {
+      passport.authenticate("local")(req, res, function() {
+        res.redirect("/secret");
+      });
+    }
+  });
+});
+
 
 // Connect to server
 app.listen(process.env.PORT || 3000, process.env.IP, function() {
