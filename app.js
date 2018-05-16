@@ -85,7 +85,6 @@ app.get("/logout", function(req, res) {
 
 // Middleware
 function isLoggedIn(req, res, next) {
-  console.log(req.isAuthenticated());
   if(req.isAuthenticated()){
     return next();
   } else {
